@@ -9,4 +9,10 @@ def eu1(n):
 			sum += i
 	return sum
 
-print(eu1(1000))
+a = eu1(1000)
+
+b = sum([x for x in range(1,1000) if(x%5==0 or x%3==0)])
+
+print(a)
+
+print(b)
