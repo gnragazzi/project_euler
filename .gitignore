@@ -1,0 +1,7 @@
+*.txt
+./aux
+*.pdf
+./__pychache__/
+*.sh
+*.sw*
+
