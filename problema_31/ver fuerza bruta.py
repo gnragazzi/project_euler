@@ -1,6 +1,5 @@
 valores_disponibles = [1,2,5,10,20,50,100,200]
 pila = []
-matrizMemo = []
 
 def euler31(x):
     for valor in valores_disponibles:
@@ -32,27 +31,14 @@ def improvedEuler31(x):
             pila.append(valor)
         else:
             break
-    for i in range(x):
-        aux = [0 for _ in range(len(pila))]
-        matrizMemo.append(aux)
-#    print(matrizMemo)
- #   print(len(matrizMemo))
     return improvedRecCoin(x, len(pila) - 1)
 
 def improvedRecCoin(valor, indice):
-#    print(f"Ejecución: valor: {valor}, índice: {indice}")
     if indice <= 0:
         return 1
-    if valor > 0 and matrizMemo[valor - 1][indice] != 0:
-        return matrizMemo[valor - 1][indice]
     contador = 0
-    valorOriginal = valor
     while valor >= 0:
+        print(valor, pila[indice -1])
         contador = contador + improvedRecCoin(valor, indice - 1)
         valor = valor - pila[indice]
-    matrizMemo[valorOriginal - 1][indice] = contador
     return contador
-
-print(f"res: {improvedEuler31(2000)}")
-for fila in matrizMemo:
-    print(fila)
