@@ -50,82 +50,52 @@ inicio = time.perf_counter()
 
 ### Constantes
 
-n = 1000000
+n = 100
 cantidadMaximaDeDigitosBinarios = floor(log2(n)) + 1
 potenciasDe2 = [2**x for x in range(cantidadMaximaDeDigitosBinarios + 200)]
 
 ### Funciones Auxiliares
 
-def obtenerNumeroDeLista(x):
-    res = 0
-    for i in range(len(x)):
-        res = res + x[i] * (10**(len(x)-1-i))
-    return res
-
-def decimalEsPalindromo(x):
-    lista = []
-    while x > 0:
-        lista.append(x % 10)
-        x = x // 10
-
-    a = obtenerNumeroDeLista(lista)
-    lista.reverse()
-    b = obtenerNumeroDeLista(lista)    
-
-    return a == b
-
-def calcularValorDecimal(x):
-    valor = 0
-    for indice, digitoBinario in enumerate(x):
-        valor = valor + potenciasDe2[indice] * digitoBinario
-    return valor
-
-def obtenerPalindromosDeLongitudPar(palindromoLongitudImpar, cantidadDigitosBinarios):
-    medio = cantidadDigitosBinarios // 2
-    
-    nuevoPalindromo = palindromoLongitudImpar[0][:]
-    nuevoPalindromo.insert(medio, nuevoPalindromo[medio])
-    return [(nuevoPalindromo, calcularValorDecimal(nuevoPalindromo))]
-
-def obtenerPalindromosDeLongitudImpar(palindromoLongitudPar, cantidadDigitosBinarios):
+def obtenerPalindromos(semilla):
     res = []
-    medio = cantidadDigitosBinarios // 2
-
-    for i in range(2):
-        nuevoPalindromo = palindromoLongitudPar[0][:]
-        nuevoPalindromo.insert(medio, i)
-        res.append((nuevoPalindromo, calcularValorDecimal(nuevoPalindromo)))
-    return res
-
-def obtenerPalindromos(palindromo):
-    cantidadDigitosBinarios = len(palindromo[0])
-    esLongitudPar = cantidadDigitosBinarios % 2 == 0
+    longitudLista = len(semilla[0])
+    semillaInvertida = semilla[0][:]
+    semillaInvertida.reverse()
     
-    if esLongitudPar:
-        return obtenerPalindromosDeLongitudImpar(palindromo, cantidadDigitosBinarios)
+    res.append(((semilla[0] + semillaInvertida), (potenciasDe2[longitudLista] + 1 ) * semilla[1] + semillaInvertida[0] - 1))
+    valorAux = (potenciasDe2[longitudLista + 1] + 1) * semilla[1] + semillaInvertida[0] - 1
+    res.append(((semilla[0] + [0] + semillaInvertida), valorAux))
+    res.append(((semilla[0] + [1] + semillaInvertida), valorAux + potenciasDe2[longitudLista]))
 
-    return obtenerPalindromosDeLongitudPar(palindromo, cantidadDigitosBinarios)
+    return res
 
 ### Inicio Algoritmo
 
-listaDeCandidatos = []
-colaDePalindromos = [([1],1)]
+listaDeResultados = [([1],1)]
+colaDeSemillas = [([1,1],3),([1,0,1],5),([1,1,1],7)]
 
-palindromo = colaDePalindromos.pop(0)
+semilla = colaDeSemillas.pop(0)
 
-
-while palindromo[1] < n:
-    colaDePalindromos = colaDePalindromos + obtenerPalindromos(palindromo)
-    listaDeCandidatos.append(palindromo)
-    palindromo = colaDePalindromos.pop(0)
+while semilla[1] < n:
     
-res = 0    
+    colaDeSemillas = colaDeSemillas + obtenerPalindromos(semilla)
+    
+    semillaPar = (semilla[0][:],semilla[1] - 1)
+    semillaPar[0][-1] = 0
 
-for palindromo in listaDeCandidatos:
-    if decimalEsPalindromo(palindromo[1]):
-        res = res + palindromo[1]
-        
-print(res)
+    colaDeSemillas = colaDeSemillas + obtenerPalindromos(semillaPar)
+    
+    listaDeResultados.append(semilla)
+    colaDeSemillas = sorted(colaDeSemillas, key=lambda semilla: semilla[1])
+    semilla = colaDeSemillas.pop(0)
+    
+for palindromo in listaDeResultados:
+    print(palindromo)
+print(len(listaDeResultados))
+
+
+
+
 ### Fin Cuenta de Tiempo
 
 fin = time.perf_counter()
